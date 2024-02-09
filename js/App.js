@@ -1,5 +1,5 @@
-class App extends Component{
-    constructor(props){
+class App extends Component {
+    constructor(props) {
         super(props);
         this.header = new Header({
             id: 'header',
@@ -11,8 +11,8 @@ class App extends Component{
         });
     }
 
-    showPage(name){
-        if (this[name]?.show){
+    showPage(name) {
+        if (this[name]?.show) {
             this[name].show();
         }
     }

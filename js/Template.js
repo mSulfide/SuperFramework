@@ -1,1 +1,1 @@
-function Template(){}
+function Template() { }

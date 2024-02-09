@@ -1,5 +1,5 @@
-class Component{
-    constructor ({id, parent, template, templateParams = null, callbacks = {}, className}){
+class Component {
+    constructor({ id, parent, template, templateParams = null, callbacks = {}, className }) {
         this.id = id;
         this.parent = parent;
         this.callbacks = callbacks;
@@ -7,23 +7,28 @@ class Component{
         this.addEventListeners();
     }
 
-    show(){
+    show() {
         document.getElementById(this.id).classList.remove('hide');
     }
 
-    hide(){
+    hide() {
         document.getElementById(this.id).classList.add('hide');
     }
 
-    render(template, className){
+    render(template, className) {
         const elem = document.createElement('div');
-        elementAttribute('id', this.id);
-        if (className){
+        elem.setAttribute('id', this.id);
+        if (className) {
             elem.classList.add(className);
         }
         elem.innerHTML = template;
-        if (this.parent) document.getElementById(this.parent).appendChild(elem);
-        else document.querySelector('body').appendChild(elem);
+        if (this.parent) {
+            document.getElementById(this.parent).appendChild(elem);
+        }
+        else {
+            document.querySelector('body').appendChild(elem);
+        }
     }
-    addEventListeners(){}
+
+    addEventListeners() { }
 }
