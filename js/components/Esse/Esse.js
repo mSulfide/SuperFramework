@@ -1,0 +1,1 @@
+class Esse extends Component { }

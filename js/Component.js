@@ -14,7 +14,7 @@ class Component {
     hide() {
         document.getElementById(this.id).classList.add('hide');
     }
-
+    
     render(template, className) {
         const elem = document.createElement('div');
         elem.setAttribute('id', this.id);
