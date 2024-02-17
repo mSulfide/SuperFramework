@@ -1,3 +1,3 @@
 Template.prototype.graph3DTemplate = () => `
-    <h1>Graph3D</h1>
+    <canvas id='graph3DCanvas'></canvas>
 `;

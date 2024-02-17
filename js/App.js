@@ -30,7 +30,7 @@ class App extends Component {
             template: template.esseTemplate
         });
 
-        this.showPage('graph2D');
+        this.showPage('graph3D');
     }
 
     showPage(name) {
