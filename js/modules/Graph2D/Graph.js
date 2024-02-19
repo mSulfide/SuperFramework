@@ -1,4 +1,16 @@
-function Graph({ id, width = 300, height = 300, WIN, callbacks }) {
+function Graph({
+    id,
+    width = 300,
+    height = 300,
+    WIN,
+    callbacks = {
+        wheel: () => '',
+        mousemove: () => '',
+        mouseleave: () => '',
+        mouseup: () => '',
+        mousedown: () => ''
+    }
+}) {
     let canvas;
     if (id) {
         canvas = document.getElementById(id);
@@ -9,13 +21,7 @@ function Graph({ id, width = 300, height = 300, WIN, callbacks }) {
     canvas.width = width;
     canvas.height = height;
     const context = canvas.getContext('2d');
-    const { wheel, mousemove, mouseleave, mouseup, mousedown } = callbacks | {
-        wheel: () => '',
-        mousemove: () => '',
-        mouseleave: () => '',
-        mouseup: () => '',
-        mousedown: () => ''
-    };
+    const { wheel, mousemove, mouseleave, mouseup, mousedown } = callbacks;
     canvas.addEventListener('wheel', wheel);
     canvas.addEventListener('mousemove', mousemove);
     canvas.addEventListener('mouseleave', mouseleave);
