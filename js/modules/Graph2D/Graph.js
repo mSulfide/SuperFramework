@@ -57,6 +57,16 @@ class Graph {
         this.context.closePath();
     }
 
+    triangle(x1 = 0, y1 = 0, x2 = 0, y2 = 0, x3 = 0, y3 = 0, color = '#f00') {
+        this.context.beginPath();
+        this.context.fillStyle = color;
+        this.context.moveTo(this.xs(x1), this.ys(y1));
+        this.context.lineTo(this.xs(x2), this.ys(y2));
+        this.context.lineTo(this.xs(x3), this.ys(y3));
+        this.context.fill()
+        this.context.closePath();
+    }
+
     text = (x, y, text, color = "#000") => {
         this.context.font = "24pt arial";
         this.context.fillStyle = color;
