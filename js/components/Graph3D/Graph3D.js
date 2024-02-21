@@ -6,7 +6,7 @@ class Graph3D extends Component {
             bottom: -5,
             width: 10,
             height: 10,
-            center: new Point(0, 0, -40),
+            center: new Point(0, 0, -30),
             camera: new Point(0, 0, -50)
         }
         this.graph = new Graph({ id: 'graph3DCanvas', width: 600, height: 600, WIN });
@@ -42,6 +42,8 @@ class Graph3D extends Component {
     }
 
     renderScene() {
+        console.log(this.graph);
+        this.graph.point(1.5, 1.5);
         this.scene.points.forEach(point => {
             this.graph.point(this.math3D.xs(point), this.math3D.ys(point));
         });
