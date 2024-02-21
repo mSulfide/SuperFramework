@@ -17,18 +17,16 @@ class Graph3D extends Component {
         this.renderScene();
     }
 
-    test() {
-        return new Surface([
-            new Point(5, 5, 0),
-            new Point(5, -5, -5),
-            new Point(-5, -5, -5),
-            new Point(-5, 5, -5),
-        ], [
-            
-        ], [
-            new Polygon(2, 0, 1),
-            new Polygon(0, 2, 3)
-        ]);
+    test(radius = 0, iteration = 5) {
+        const calc = new Calculator3D;
+        const vertices = [];
+        vertices.push(new Point(0, radius, 0));
+        for (let i = 1; i < iteration - 1; i++) {
+            for (let j = 0; j < iteration; j++) {
+                vertices.push();//
+            }
+        }
+        vertices.push(new Point(0, -radius, 0));
     }
 
     cube(edge) {
@@ -77,22 +75,17 @@ class Graph3D extends Component {
             const normal = this.scene.normals[i];
             const calc = new Calculator3D;
 
-            console.log(normal);
-
             if (calc.scalMult(new Point(0, 0, -1), normal) <= 0) continue;
 
             const point1 = this.scene.points[polygon.p1];
             const point2 = this.scene.points[polygon.p2];
             const point3 = this.scene.points[polygon.p3];
 
-            const color = (Math.round((128 * (calc.scalMult(this.WIN.ligthDirection, normal) + 1)))).toString(16);
-            console.log(`${color}|${Math.round((128 * (calc.scalMult(this.WIN.ligthDirection, normal) + 1)))}`);
-
             this.graph.triangle(
                 this.math3D.xs(point1), this.math3D.ys(point1),
                 this.math3D.xs(point2), this.math3D.ys(point2),
                 this.math3D.xs(point3), this.math3D.ys(point3),
-                `#${color}0000`
+                calc.ligth(1, 0, 0, calc.scalMult(this.WIN.ligthDirection, normal))
             );
         }
     }
