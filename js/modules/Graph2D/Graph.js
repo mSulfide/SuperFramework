@@ -1,33 +1,30 @@
-function Graph({
-    id,
-    width = 300,
-    height = 300,
-    WIN,
-    callbacks = {
-        wheel: () => '',
-        mousemove: () => '',
-        mouseleave: () => '',
-        mouseup: () => '',
-        mousedown: () => ''
+class Graph {
+    constructor({ id, width = 300, height = 300, WIN, callbacks }) {
+        if (id) {
+            this.canvas = document.getElementById(id);
+        } else {
+            this.canvas = document.createElement('canvas');
+            document.querySelector('body').appendChild(canvas);
+        }
+        this.canvas.width = width;
+        this.canvas.height = height;
+        this.context = this.canvas.getContext('2d');
+
+        this.WIN = WIN;
+
+        const { wheel, mousemove, mouseleave, mouseup, mousedown } = callbacks | {
+            wheel: () => '',
+            mousemove: () => '',
+            mouseleave: () => '',
+            mouseup: () => '',
+            mousedown: () => ''
+        };
+        this.canvas.addEventListener('wheel', wheel);
+        this.canvas.addEventListener('mousemove', mousemove);
+        this.canvas.addEventListener('mouseleave', mouseleave);
+        this.canvas.addEventListener('mouseup', mouseup);
+        this.canvas.addEventListener('mousedown', mousedown);
     }
-}) {
-    let canvas;
-    if (id) {
-        canvas = document.getElementById(id);
-    } else {
-        canvas = document.createElement('canvas');
-        document.querySelector('body').appendChild(canvas);
-    }
-    canvas.width = width;
-    canvas.height = height;
-    const context = canvas.getContext('2d');
-    const { wheel, mousemove, mouseleave, mouseup, mousedown } = callbacks;
-    canvas.addEventListener('wheel', wheel);
-    canvas.addEventListener('mousemove', mousemove);
-    canvas.addEventListener('mouseleave', mouseleave);
-    canvas.addEventListener('mouseup', mouseup);
-    canvas.addEventListener('mousedown', mousedown);
-    const PI2 = 2 * Math.PI;
 
     xs = x => (x - this.WIN.left) / this.WIN.width * canvas.width;
 

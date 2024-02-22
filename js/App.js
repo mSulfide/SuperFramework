@@ -29,11 +29,6 @@ class App extends Component {
             parent: this.id,
             template: template.esseTemplate
         });
-        this.sim = new StudentSimulator({
-            id: 'sim',
-            parent: this.id,
-            template: template.studentSimulatorTemplate
-        });
 
         this.showPage('graph3D');
     }
@@ -43,7 +38,6 @@ class App extends Component {
         this.graph2D.hide();
         this.graph3D.hide();
         this.esse.hide();
-        this.sim.hide();
         if (this[name]?.show) {
             this[name].show();
         }
