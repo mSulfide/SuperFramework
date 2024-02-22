@@ -21,6 +21,7 @@ class Graph3D extends Component {
         const calc = new Calculator3D;
 
         const vertices = [];
+        const edges = [];
 
         for (let i = 0; i < 20; i++) {
             const rotate = 2 * Math.PI * i / 20;
@@ -45,7 +46,22 @@ class Graph3D extends Component {
             vertices.push(calc.rotateY(calc.add(calc.prod(new Point(-0.58779, 0.80902, 0), radius), new Point(offset, 0, 0)), rotate));
             vertices.push(calc.rotateY(calc.add(calc.prod(new Point(-0.30902, 0.95106, 0), radius), new Point(offset, 0, 0)), rotate));
         }
-        return new Surface(vertices);
+
+        for (let i = 0; i < 20; i++) {
+            for (let j = 1; j < 20; j++) {
+                edges.push(new Edge(20 * i + j - 1, 20 * i + j));
+            }
+            edges.push(new Edge(20 * i, 20 * (i + 1) - 1));
+        }
+
+        for (let i = 1; i < 20; i++) {
+            for (let j = 0; j < 20; j++) {
+                edges.push(new Edge(20 * (i - 1) + j, 20 * i + j));
+            }
+            edges.push(new Edge(0, 20 * i - 1));
+        }
+
+        return new Surface(vertices, edges);
     }
 
     sphere(radius = 1) {
