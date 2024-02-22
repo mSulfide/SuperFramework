@@ -13,23 +13,77 @@ class Graph3D extends Component {
         this.WIN = WIN;
         this.graph = new Graph({ id: 'graph3DCanvas', width: 600, height: 600, WIN });
         this.math3D = new Math3D({ WIN });
-        this.scene = this.test();
+        this.scene = this.torus(2, 5);
         this.renderScene();
     }
 
-    test(radius = 0, iteration = 5) {
+    torus(radius = 1, offset = 2) {
         const calc = new Calculator3D;
+
         const vertices = [];
-        vertices.push(new Point(0, radius, 0));
-        for (let i = 1; i < iteration - 1; i++) {
-            for (let j = 0; j < iteration; j++) {
-                vertices.push();//
-            }
+
+        for (let i = 0; i < 20; i++) {
+            const rotate = 2 * Math.PI * i / 20;
+            vertices.push(calc.rotateY(calc.add(calc.prod(new Point(0.00000, 1.00000, 0), radius), new Point(offset, 0, 0)), rotate));
+            vertices.push(calc.rotateY(calc.add(calc.prod(new Point(0.30902, 0.95106, 0), radius), new Point(offset, 0, 0)), rotate));
+            vertices.push(calc.rotateY(calc.add(calc.prod(new Point(0.58779, 0.80902, 0), radius), new Point(offset, 0, 0)), rotate));
+            vertices.push(calc.rotateY(calc.add(calc.prod(new Point(0.80902, 0.58779, 0), radius), new Point(offset, 0, 0)), rotate));
+            vertices.push(calc.rotateY(calc.add(calc.prod(new Point(0.95105, 0.30902, 0), radius), new Point(offset, 0, 0)), rotate));
+            vertices.push(calc.rotateY(calc.add(calc.prod(new Point(1.00000, 0.00000, 0), radius), new Point(offset, 0, 0)), rotate));
+            vertices.push(calc.rotateY(calc.add(calc.prod(new Point(0.95105, -0.30902, 0), radius), new Point(offset, 0, 0)), rotate));
+            vertices.push(calc.rotateY(calc.add(calc.prod(new Point(0.80902, -0.58779, 0), radius), new Point(offset, 0, 0)), rotate));
+            vertices.push(calc.rotateY(calc.add(calc.prod(new Point(0.58779, -0.80902, 0), radius), new Point(offset, 0, 0)), rotate));
+            vertices.push(calc.rotateY(calc.add(calc.prod(new Point(0.30902, -0.95106, 0), radius), new Point(offset, 0, 0)), rotate));
+            vertices.push(calc.rotateY(calc.add(calc.prod(new Point(0.00000, -1.00000, 0), radius), new Point(offset, 0, 0)), rotate));
+            vertices.push(calc.rotateY(calc.add(calc.prod(new Point(-0.30902, -0.95106, 0), radius), new Point(offset, 0, 0)), rotate));
+            vertices.push(calc.rotateY(calc.add(calc.prod(new Point(-0.58779, -0.80902, 0), radius), new Point(offset, 0, 0)), rotate));
+            vertices.push(calc.rotateY(calc.add(calc.prod(new Point(-0.80902, -0.58779, 0), radius), new Point(offset, 0, 0)), rotate));
+            vertices.push(calc.rotateY(calc.add(calc.prod(new Point(-0.95105, -0.30902, 0), radius), new Point(offset, 0, 0)), rotate));
+            vertices.push(calc.rotateY(calc.add(calc.prod(new Point(-1.00000, 0.00000, 0), radius), new Point(offset, 0, 0)), rotate));
+            vertices.push(calc.rotateY(calc.add(calc.prod(new Point(-0.95105, 0.30902, 0), radius), new Point(offset, 0, 0)), rotate));
+            vertices.push(calc.rotateY(calc.add(calc.prod(new Point(-0.80902, 0.58779, 0), radius), new Point(offset, 0, 0)), rotate));
+            vertices.push(calc.rotateY(calc.add(calc.prod(new Point(-0.58779, 0.80902, 0), radius), new Point(offset, 0, 0)), rotate));
+            vertices.push(calc.rotateY(calc.add(calc.prod(new Point(-0.30902, 0.95106, 0), radius), new Point(offset, 0, 0)), rotate));
         }
-        vertices.push(new Point(0, -radius, 0));
+        return new Surface(vertices);
     }
 
-    cube(edge) {
+    sphere(radius = 1) {
+        const calc = new Calculator3D;
+
+        const vertices = [];
+        const edges = [];
+
+        vertices.push(new Point(0, radius, 0));
+        for (let i = 0; i < 20; i++) {
+            const rotate = 2 * Math.PI * i / 20;
+            vertices.push(calc.prod(calc.rotateY(new Point(0.30902, 0.95106, 0), rotate), radius));
+            vertices.push(calc.prod(calc.rotateY(new Point(0.58779, 0.80902, 0), rotate), radius));
+            vertices.push(calc.prod(calc.rotateY(new Point(0.80902, 0.58779, 0), rotate), radius));
+            vertices.push(calc.prod(calc.rotateY(new Point(0.95105, 0.30902, 0), rotate), radius));
+            vertices.push(calc.prod(calc.rotateY(new Point(1.00000, 0.00000, 0), rotate), radius));
+            vertices.push(calc.prod(calc.rotateY(new Point(0.95105, -0.30902, 0), rotate), radius));
+            vertices.push(calc.prod(calc.rotateY(new Point(0.80902, -0.58779, 0), rotate), radius));
+            vertices.push(calc.prod(calc.rotateY(new Point(0.58779, -0.80902, 0), rotate), radius));
+            vertices.push(calc.prod(calc.rotateY(new Point(0.30902, -0.95106, 0), rotate), radius));
+        }
+        vertices.push(new Point(0, -radius, 0));
+
+        for (let i = 0; i < 19; i++) {
+            for (let j = 1; j <= 9; j++) {
+                edges.push(new Edge(9 * i + j, 9 * (i + 1) + j));
+            }
+        }
+        for (let i = 0; i < 19; i++) {
+            for (let j = 1; j < 9; j++) {
+                edges.push(new Edge(9 * i + j, 9 * i + j + 1));
+            }
+        }
+
+        return new Surface(vertices, edges);
+    }
+
+    cube(edge = 1) {
         return new Surface([
             new Point(edge, edge, edge),
             new Point(edge, -edge, edge),
@@ -52,9 +106,6 @@ class Graph3D extends Component {
             new Edge(5, 6),
             new Edge(6, 7),
             new Edge(7, 4)
-        ], [
-            new Polygon(0, 2, 1),
-            new Polygon(2, 0, 3)
         ]);
     }
 
