@@ -22,43 +22,48 @@ class Graph3D extends Component {
 
         const vertices = [];
         const edges = [];
+        const verticalEdgeCount = 80;
+        const horizontalEdgeCount = 30;
 
-        for (let i = 0; i < 20; i++) {
-            const rotate = 2 * Math.PI * i / 20;
-            vertices.push(calc.rotateY(calc.add(calc.prod(new Point(0.00000, 1.00000, 0), radius), new Point(offset, 0, 0)), rotate));
-            vertices.push(calc.rotateY(calc.add(calc.prod(new Point(0.30902, 0.95106, 0), radius), new Point(offset, 0, 0)), rotate));
-            vertices.push(calc.rotateY(calc.add(calc.prod(new Point(0.58779, 0.80902, 0), radius), new Point(offset, 0, 0)), rotate));
-            vertices.push(calc.rotateY(calc.add(calc.prod(new Point(0.80902, 0.58779, 0), radius), new Point(offset, 0, 0)), rotate));
-            vertices.push(calc.rotateY(calc.add(calc.prod(new Point(0.95105, 0.30902, 0), radius), new Point(offset, 0, 0)), rotate));
-            vertices.push(calc.rotateY(calc.add(calc.prod(new Point(1.00000, 0.00000, 0), radius), new Point(offset, 0, 0)), rotate));
-            vertices.push(calc.rotateY(calc.add(calc.prod(new Point(0.95105, -0.30902, 0), radius), new Point(offset, 0, 0)), rotate));
-            vertices.push(calc.rotateY(calc.add(calc.prod(new Point(0.80902, -0.58779, 0), radius), new Point(offset, 0, 0)), rotate));
-            vertices.push(calc.rotateY(calc.add(calc.prod(new Point(0.58779, -0.80902, 0), radius), new Point(offset, 0, 0)), rotate));
-            vertices.push(calc.rotateY(calc.add(calc.prod(new Point(0.30902, -0.95106, 0), radius), new Point(offset, 0, 0)), rotate));
-            vertices.push(calc.rotateY(calc.add(calc.prod(new Point(0.00000, -1.00000, 0), radius), new Point(offset, 0, 0)), rotate));
-            vertices.push(calc.rotateY(calc.add(calc.prod(new Point(-0.30902, -0.95106, 0), radius), new Point(offset, 0, 0)), rotate));
-            vertices.push(calc.rotateY(calc.add(calc.prod(new Point(-0.58779, -0.80902, 0), radius), new Point(offset, 0, 0)), rotate));
-            vertices.push(calc.rotateY(calc.add(calc.prod(new Point(-0.80902, -0.58779, 0), radius), new Point(offset, 0, 0)), rotate));
-            vertices.push(calc.rotateY(calc.add(calc.prod(new Point(-0.95105, -0.30902, 0), radius), new Point(offset, 0, 0)), rotate));
-            vertices.push(calc.rotateY(calc.add(calc.prod(new Point(-1.00000, 0.00000, 0), radius), new Point(offset, 0, 0)), rotate));
-            vertices.push(calc.rotateY(calc.add(calc.prod(new Point(-0.95105, 0.30902, 0), radius), new Point(offset, 0, 0)), rotate));
-            vertices.push(calc.rotateY(calc.add(calc.prod(new Point(-0.80902, 0.58779, 0), radius), new Point(offset, 0, 0)), rotate));
-            vertices.push(calc.rotateY(calc.add(calc.prod(new Point(-0.58779, 0.80902, 0), radius), new Point(offset, 0, 0)), rotate));
-            vertices.push(calc.rotateY(calc.add(calc.prod(new Point(-0.30902, 0.95106, 0), radius), new Point(offset, 0, 0)), rotate));
+        for (let i = 0; i < verticalEdgeCount; i++) {
+            const circleRotate = 2 * Math.PI * i / verticalEdgeCount;
+
+            for (let j = 0; j < horizontalEdgeCount; j++) {
+                const centerRotate = 2 * Math.PI * j / horizontalEdgeCount + Math.PI / 2;
+
+                vertices.push(
+                    calc.rotateY(
+                        calc.add(
+                            calc.prod(
+                                new Point(
+                                    -Math.cos(centerRotate),
+                                    Math.sin(centerRotate),
+                                    0
+                                ),
+                                radius
+                            ),
+                            new Point(offset, 0, 0)
+                        ),
+                        circleRotate
+                    )
+                );
+            }
         }
 
-        for (let i = 0; i < 20; i++) {
-            for (let j = 1; j < 20; j++) {
-                edges.push(new Edge(20 * i + j - 1, 20 * i + j));
+        //vertical edges
+        for (let i = 0; i < verticalEdgeCount; i++) {
+            for (let j = 1; j < horizontalEdgeCount; j++) {
+                edges.push(new Edge(horizontalEdgeCount * i + j - 1, horizontalEdgeCount * i + j));
             }
-            edges.push(new Edge(20 * i, 20 * (i + 1) - 1));
+            edges.push(new Edge(horizontalEdgeCount * i, horizontalEdgeCount * (i + 1) - 1));
         }
 
-        for (let i = 1; i < 20; i++) {
-            for (let j = 0; j < 20; j++) {
-                edges.push(new Edge(20 * (i - 1) + j, 20 * i + j));
+        //horizontal edges
+        for (let j = 0; j < horizontalEdgeCount; j++) {
+            for (let i = 1; i < verticalEdgeCount; i++) {
+                edges.push(new Edge(horizontalEdgeCount * (i - 1) + j, horizontalEdgeCount * i + j));
             }
-            edges.push(new Edge(0, 20 * i - 1));
+            edges.push(new Edge(j, horizontalEdgeCount * (verticalEdgeCount - 1) + j));
         }
 
         return new Surface(vertices, edges);
