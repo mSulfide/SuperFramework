@@ -11,13 +11,54 @@ class Graph3D extends Component {
             ligthDirection: (new Calculator3D).normalize(new Point(-1, 1, -1))
         }
         this.WIN = WIN;
-        this.graph = new Graph({ id: 'graph3DCanvas', width: 600, height: 600, WIN });
+        this.canMove = false;
+        this.graph = new Graph({ 
+            id: 'graph3DCanvas', 
+            width: 600, 
+            height: 600, 
+            WIN,
+            callbacks: {
+                wheel: event => this.wheel(event),
+                mousemove: event => this.mousemove(event),
+                mouseup: () => this.mouseup(),
+                mousedown: () => this.mousedown()
+            }
+        });
         this.math3D = new Math3D({ WIN });
         this.scene = (new Surfaces).torus(2, 5);
         this.renderScene();
     }
 
+    mouseup() {
+        this.canMove = false;
+    }
+
+    mousedown() {
+        this.canMove = true;
+    }
+
+    wheel(event) {
+        event.preventDefault();
+        const delta = (event.wheelDelta > 0) ? 1.25 : 0.8;
+        this.scene.points.forEach(point => this.math3D.zoom(point, delta));
+        this.renderScene();
+    }
+
+    mousemove(event) {
+        if (this.canMove) {
+            const gradus = Math.PI / 180 / 4;
+            this.scene.points.forEach(point => {
+                this.math3D.rotateOx(point, (this.dy - event.offsetY) * gradus);
+                this.math3D.rotateOy(point, (this.dx - event.offsetX) * gradus);
+            });
+            this.renderScene();
+        }
+        this.dx = event.offsetX;
+        this.dy = event.offsetY;
+    }
+
     renderScene() {
+        this.graph.clear();
         this.scene.points.forEach(point => {
             this.graph.point(this.math3D.xs(point), this.math3D.ys(point));
         });
@@ -28,7 +69,7 @@ class Graph3D extends Component {
             this.graph.line(this.math3D.xs(point1), this.math3D.ys(point1), this.math3D.xs(point2), this.math3D.ys(point2));
         });
 
-        const polygons = this.scene.polygons;
+        /*const polygons = this.scene.polygons;
         for (let i = 0; i < polygons.length; i++) {
             const polygon = polygons[i];
             const normal = this.scene.normals[i];
@@ -46,6 +87,6 @@ class Graph3D extends Component {
                 this.math3D.xs(point3), this.math3D.ys(point3),
                 calc.ligth(1, 0, 0, calc.scalMult(this.WIN.ligthDirection, normal))
             );
-        }
+        }*/
     }
 }

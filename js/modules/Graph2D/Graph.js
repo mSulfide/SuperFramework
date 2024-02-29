@@ -12,13 +12,13 @@ class Graph {
 
         this.WIN = WIN;
 
-        const { wheel, mousemove, mouseleave, mouseup, mousedown } = callbacks | {
+        const { wheel, mousemove, mouseleave, mouseup, mousedown } = callbacks/* | {
             wheel: () => '',
             mousemove: () => '',
             mouseleave: () => '',
             mouseup: () => '',
             mousedown: () => ''
-        };
+        }*/;
         this.canvas.addEventListener('wheel', wheel);
         this.canvas.addEventListener('mousemove', mousemove);
         this.canvas.addEventListener('mouseleave', mouseleave);

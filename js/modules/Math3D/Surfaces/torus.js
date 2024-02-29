@@ -3,8 +3,8 @@ Surfaces.prototype.torus = (radius = 1, offset = 2) => {
 
     const vertices = [];
     const edges = [];
-    const verticalEdgeCount = 80;
-    const horizontalEdgeCount = 30;
+    const verticalEdgeCount = 20;
+    const horizontalEdgeCount = 15;
 
     for (let i = 0; i < verticalEdgeCount; i++) {
         const circleRotate = 2 * Math.PI * i / verticalEdgeCount;

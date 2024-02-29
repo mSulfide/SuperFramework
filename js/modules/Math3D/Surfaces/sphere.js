@@ -3,31 +3,31 @@ Surfaces.prototype.sphere = (radius = 1) => {
 
     const vertices = [];
     const edges = [];
+    const verticalEdgeCount = 20;
+    const horizontalEdgeCount = 9;
 
     vertices.push(new Point(0, radius, 0));
-    for (let i = 0; i < 20; i++) {
-        const rotate = 2 * Math.PI * i / 20;
-        vertices.push(calc.prod(calc.rotateY(new Point(0.30902, 0.95106, 0), rotate), radius));
-        vertices.push(calc.prod(calc.rotateY(new Point(0.58779, 0.80902, 0), rotate), radius));
-        vertices.push(calc.prod(calc.rotateY(new Point(0.80902, 0.58779, 0), rotate), radius));
-        vertices.push(calc.prod(calc.rotateY(new Point(0.95105, 0.30902, 0), rotate), radius));
-        vertices.push(calc.prod(calc.rotateY(new Point(1.00000, 0.00000, 0), rotate), radius));
-        vertices.push(calc.prod(calc.rotateY(new Point(0.95105, -0.30902, 0), rotate), radius));
-        vertices.push(calc.prod(calc.rotateY(new Point(0.80902, -0.58779, 0), rotate), radius));
-        vertices.push(calc.prod(calc.rotateY(new Point(0.58779, -0.80902, 0), rotate), radius));
-        vertices.push(calc.prod(calc.rotateY(new Point(0.30902, -0.95106, 0), rotate), radius));
+    for (let i = 0; i < verticalEdgeCount; i++) {
+        const rotateY = 2 * Math.PI * i / verticalEdgeCount;
+        for (let j = 1; j <= horizontalEdgeCount; j++) {
+            const rotateX = Math.PI * j / horizontalEdgeCount;
+            vertices.push(calc.prod(calc.rotateY(new Point(Math.sin(rotateX), Math.cos(rotateX), 0), rotateY), radius));
+        }
     }
     vertices.push(new Point(0, -radius, 0));
 
-    for (let i = 0; i < 19; i++) {
-        for (let j = 1; j <= 9; j++) {
-            edges.push(new Edge(9 * i + j, 9 * (i + 1) + j));
+    for (let j = 1; j <= horizontalEdgeCount; j++) {
+        for (let i = 0; i < verticalEdgeCount - 1; i++) {
+            edges.push(new Edge(horizontalEdgeCount * i + j, horizontalEdgeCount * (i + 1) + j));
         }
+        edges.push(new Edge(j, (verticalEdgeCount - 1) * horizontalEdgeCount + j));
     }
-    for (let i = 0; i < 19; i++) {
-        for (let j = 1; j < 9; j++) {
-            edges.push(new Edge(9 * i + j, 9 * i + j + 1));
+    for (let i = 0; i < verticalEdgeCount; i++) {
+        edges.push(new Edge(horizontalEdgeCount * i + 1, 0));
+        for (let j = 1; j < horizontalEdgeCount; j++) {
+            edges.push(new Edge(horizontalEdgeCount * i + j, horizontalEdgeCount * i + j + 1));
         }
+        edges.push(new Edge(horizontalEdgeCount * i + horizontalEdgeCount, vertices.length - 1));
     }
 
     return new Surface(vertices, edges);
