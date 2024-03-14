@@ -12,10 +12,10 @@ class Graph3D extends Component {
         }
         this.WIN = WIN;
         this.canMove = false;
-        this.graph = new Graph({ 
-            id: 'graph3DCanvas', 
-            width: 600, 
-            height: 600, 
+        this.graph = new Graph({
+            id: 'graph3DCanvas',
+            width: 600,
+            height: 600,
             WIN,
             callbacks: {
                 wheel: event => this.wheel(event),
@@ -25,7 +25,7 @@ class Graph3D extends Component {
             }
         });
         this.math3D = new Math3D({ WIN });
-        this.scene = (new Surfaces).torus(2, 5);
+        this.scene = (new Surfaces).cube(5);
         this.renderScene();
     }
 
@@ -69,24 +69,13 @@ class Graph3D extends Component {
             this.graph.line(this.math3D.xs(point1), this.math3D.ys(point1), this.math3D.xs(point2), this.math3D.ys(point2));
         });
 
-        /*const polygons = this.scene.polygons;
-        for (let i = 0; i < polygons.length; i++) {
-            const polygon = polygons[i];
-            const normal = this.scene.normals[i];
-            const calc = new Calculator3D;
-
-            if (calc.scalMult(new Point(0, 0, -1), normal) <= 0) continue;
-
-            const point1 = this.scene.points[polygon.p1];
-            const point2 = this.scene.points[polygon.p2];
-            const point3 = this.scene.points[polygon.p3];
-
-            this.graph.triangle(
-                this.math3D.xs(point1), this.math3D.ys(point1),
-                this.math3D.xs(point2), this.math3D.ys(point2),
-                this.math3D.xs(point3), this.math3D.ys(point3),
-                calc.ligth(1, 0, 0, calc.scalMult(this.WIN.ligthDirection, normal))
+        this.math3D.calcDistance(this.scene, this.WIN.camera, `distance`);
+        this.math3D.sortByArtistAlgorithm(this.scene);
+        this.scene.polygons.forEach(polygon => {
+            const points = polygon.points.map(
+                index => new Point(this.math3D.xs(this.scene.points[index]), this.math3D.ys(this.scene.points[index]))
             );
-        }*/
+            this.graph.polygon(points, polygon.color);
+        });
     }
 }

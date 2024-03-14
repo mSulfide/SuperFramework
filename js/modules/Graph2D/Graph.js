@@ -57,6 +57,17 @@ class Graph {
         this.context.closePath();
     }
 
+    polygon(points = [], color = '#ff0000') {
+        this.context.beginPath();
+        this.context.fillStyle = color;
+        this.context.moveTo(this.xs(points[0].x), this.ys(points[0].y));
+        for (let i = 1; i < points.length; i++) {
+            this.context.lineTo(this.xs(points[i].x), this.ys(points[i].y))
+        }
+        this.context.fill()
+        this.context.closePath();
+    }
+
     triangle(x1 = 0, y1 = 0, x2 = 0, y2 = 0, x3 = 0, y3 = 0, color = '#f00') {
         this.context.beginPath();
         this.context.fillStyle = color;
