@@ -26,7 +26,7 @@ class Graph3D extends Component {
         });
         this.math3D = new Math3D({ WIN });
         this.ligth = new Light(-40, 15, 0, 1500);
-        this.scene = (new Surfaces).sphere(5);
+        this.scene = (new Surfaces).torus(2, 5);
         this.renderScene();
     }
 
