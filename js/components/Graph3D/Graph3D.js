@@ -8,7 +8,6 @@ class Graph3D extends Component {
             height: 10,
             center: new Point(0, 0, -30),
             camera: new Point(0, 0, -50),
-            ligthDirection: (new Calculator3D).normalize(new Point(-1, 1, -1))
         }
         this.WIN = WIN;
         this.canMove = false;

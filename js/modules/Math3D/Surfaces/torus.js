@@ -1,6 +1,4 @@
 Surfaces.prototype.torus = (radius = 1, offset = 2) => {
-    const calc = new Calculator3D;
-
     const vertices = [];
     const edges = [];
     const polygons = [];
