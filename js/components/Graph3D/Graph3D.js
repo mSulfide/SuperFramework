@@ -11,6 +11,9 @@ class Graph3D extends Component {
         }
         this.WIN = WIN;
         this.canMove = false;
+        this.mouse0 = false;
+        this.mouse1 = false;
+        this.mouse2 = false;
         this.graph = new Graph({
             id: 'graph3DCanvas',
             width: 600,
@@ -19,41 +22,72 @@ class Graph3D extends Component {
             callbacks: {
                 wheel: event => this.wheel(event),
                 mousemove: event => this.mousemove(event),
-                mouseup: () => this.mouseup(),
-                mousedown: () => this.mousedown()
+                mouseup: () => this.mouseup(event),
+                mousedown: () => this.mousedown(event)
             }
         });
         this.math3D = new Math3D({ WIN });
         this.ligth = new Light(-40, 15, 0, 1500);
         this.surfaces = new Surfaces;
-        this.scene = this.SolarSystem();
+        this.scene = [this.surfaces.torus(2, 5)];
         setInterval(() => {
             this.scene.forEach(surface => surface.doAnimation(this.math3D));
             this.renderScene();
         }, 50);
     }
 
-    mouseup() {
-        this.canMove = false;
+    mouseup(event) {
+        switch (event.button) {
+            case 0:
+                this.mouse0 = false;
+                break;
+            case 1:
+                this.mouse1 = false;
+                break;
+            case 2:
+                this.mouse2 = false;
+                break;
+        }
     }
 
-    mousedown() {
-        this.canMove = true;
+    mousedown(event) {
+        switch (event.button) {
+            case 0:
+                this.mouse0 = true;
+                break;
+            case 1:
+                this.mouse1 = true;
+                break;
+            case 2:
+                this.mouse2 = true;
+                break;
+        }
     }
 
     wheel(event) {
         event.preventDefault();
-        const delta = (event.wheelDelta > 0) ? 1.25 : 0.8;
+        const delta = (event.wheelDelta > 0) ? 1.2 : 0.8;
         const matrix = this.math3D.zoom(delta);
         this.scene.forEach(surface => surface.points.forEach(point => this.math3D.transform(matrix, point)));
     }
 
     mousemove(event) {
-        if (this.canMove) {
+        if (this.mouse0 || this.mouse2) {
             const gradus = Math.PI / 180 / 4;
             const matrix = this.math3D.multMatrix(
                 this.math3D.rotateOx((this.dy - event.offsetY) * gradus),
+                this.mouse2 ? 
+                this.math3D.rotateOz((this.dx - event.offsetX) * gradus) :
                 this.math3D.rotateOy((this.dx - event.offsetX) * gradus)
+            );
+            this.scene.forEach(surface => surface.points.forEach(point => this.math3D.transform(matrix, point)));
+        }
+        if (this.mouse1) {
+            const offset = 0.05;
+            const matrix = this.math3D.move(
+                (this.dx - event.offsetX) * -offset,
+                (this.dy - event.offsetY) * offset,
+                0
             );
             this.scene.forEach(surface => surface.points.forEach(point => this.math3D.transform(matrix, point)));
         }
