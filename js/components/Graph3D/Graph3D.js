@@ -25,8 +25,12 @@ class Graph3D extends Component {
         });
         this.math3D = new Math3D({ WIN });
         this.ligth = new Light(-40, 15, 0, 1500);
-        this.scene = (new Surfaces).torus(2, 5);
-        this.renderScene();
+        this.surfaces = new Surfaces;
+        this.scene = this.SolarSystem();
+        setInterval(() => {
+            this.scene.forEach(surface => surface.doAnimation(this.math3D));
+            this.renderScene();
+        }, 50);
     }
 
     mouseup() {
@@ -40,48 +44,60 @@ class Graph3D extends Component {
     wheel(event) {
         event.preventDefault();
         const delta = (event.wheelDelta > 0) ? 1.25 : 0.8;
-        this.scene.points.forEach(point => this.math3D.zoom(point, delta));
-        this.renderScene();
+        const matrix = this.math3D.zoom(delta);
+        this.scene.forEach(surface => surface.points.forEach(point => this.math3D.transform(matrix, point)));
     }
 
     mousemove(event) {
         if (this.canMove) {
             const gradus = Math.PI / 180 / 4;
-            this.scene.points.forEach(point => {
-                this.math3D.rotateOx(point, (this.dy - event.offsetY) * gradus);
-                this.math3D.rotateOy(point, (this.dx - event.offsetX) * gradus);
-            });
-            this.renderScene();
+            const matrix = this.math3D.multMatrix(
+                this.math3D.rotateOx((this.dy - event.offsetY) * gradus),
+                this.math3D.rotateOy((this.dx - event.offsetX) * gradus)
+            );
+            this.scene.forEach(surface => surface.points.forEach(point => this.math3D.transform(matrix, point)));
         }
         this.dx = event.offsetX;
         this.dy = event.offsetY;
     }
 
+    SolarSystem() {
+        const Earth = this.surfaces.sphere(3);
+        Earth.addAnimation('rotateOy', 0.1);
+        const Moon = this.surfaces.cube(1);
+        Moon.addAnimation('rotateOx', 0.2);
+        Moon.addAnimation('rotateOz', 0.05);
+        return [Earth, Moon];
+    }
+
     renderScene() {
         this.graph.clear();
-        this.scene.points.forEach(point => {
-            this.graph.point(this.math3D.xs(point), this.math3D.ys(point));
+        this.scene.forEach(surface => {
+            surface.points.forEach(point => {
+                this.graph.point(this.math3D.xs(point), this.math3D.ys(point));
+            });
+
+            surface.edges.forEach(edge => {
+                const point1 = surface.points[edge.p1];
+                const point2 = surface.points[edge.p2];
+                this.graph.line(this.math3D.xs(point1), this.math3D.ys(point1), this.math3D.xs(point2), this.math3D.ys(point2));
+            });
+
+            this.math3D.calcDistance(surface, this.WIN.camera, `distance`);
+            this.math3D.calcDistance(surface, this.ligth, 'lumen');
+            this.math3D.sortByArtistAlgorithm(surface);
+            surface.polygons.forEach(polygon => {
+                const points = polygon.points.map(
+                    index => new Point(this.math3D.xs(surface.points[index]), this.math3D.ys(surface.points[index]))
+                );
+                const lumen = this.math3D.calcIllumination(polygon.lumen, this.ligth.lumen);
+                let { r, g, b } = polygon.color;
+                r = Math.round(r * lumen);
+                g = Math.round(g * lumen);
+                b = Math.round(b * lumen);
+                this.graph.polygon(points, polygon.rgbToHex(r, g, b));
+            });
         });
 
-        this.scene.edges.forEach(edge => {
-            const point1 = this.scene.points[edge.p1];
-            const point2 = this.scene.points[edge.p2];
-            this.graph.line(this.math3D.xs(point1), this.math3D.ys(point1), this.math3D.xs(point2), this.math3D.ys(point2));
-        });
-
-        this.math3D.calcDistance(this.scene, this.WIN.camera, `distance`);
-        this.math3D.calcDistance(this.scene, this.ligth, 'lumen');
-        this.math3D.sortByArtistAlgorithm(this.scene);
-        this.scene.polygons.forEach(polygon => {
-            const points = polygon.points.map(
-                index => new Point(this.math3D.xs(this.scene.points[index]), this.math3D.ys(this.scene.points[index]))
-            );
-            const lumen = this.math3D.calcIllumination(polygon.lumen, this.ligth.lumen);
-            let {r, g, b} = polygon.color;
-            r = Math.round(r * lumen);
-            g = Math.round(g * lumen);
-            b = Math.round(b * lumen);
-            this.graph.polygon(points, polygon.rgbToHex(r, g, b));
-        });
     }
 }
