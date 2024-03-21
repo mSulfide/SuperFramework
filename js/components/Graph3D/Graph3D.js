@@ -25,7 +25,8 @@ class Graph3D extends Component {
             }
         });
         this.math3D = new Math3D({ WIN });
-        this.scene = (new Surfaces).cube(5);
+        this.ligth = new Light(-40, 15, 0, 1500);
+        this.scene = (new Surfaces).sphere(5);
         this.renderScene();
     }
 
@@ -70,12 +71,18 @@ class Graph3D extends Component {
         });
 
         this.math3D.calcDistance(this.scene, this.WIN.camera, `distance`);
+        this.math3D.calcDistance(this.scene, this.ligth, 'lumen');
         this.math3D.sortByArtistAlgorithm(this.scene);
         this.scene.polygons.forEach(polygon => {
             const points = polygon.points.map(
                 index => new Point(this.math3D.xs(this.scene.points[index]), this.math3D.ys(this.scene.points[index]))
             );
-            this.graph.polygon(points, polygon.color);
+            const lumen = this.math3D.calcIllumination(polygon.lumen, this.ligth.lumen);
+            let {r, g, b} = polygon.color;
+            r = Math.round(r * lumen);
+            g = Math.round(g * lumen);
+            b = Math.round(b * lumen);
+            this.graph.polygon(points, polygon.rgbToHex(r, g, b));
         });
     }
 }
