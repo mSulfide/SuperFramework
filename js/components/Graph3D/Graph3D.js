@@ -34,7 +34,7 @@ class Graph3D extends Component {
         this.math3D = new Math3D({ WIN });
         this.ligth = new Light(-40, 15, 0, 1500);
         this.surfaces = new Surfaces;
-        this.scene = this.SolarSystem() /*[this.surfaces.torus(2, 5), this.surfaces.sphere(4)]*/;
+        this.scene = [this.surfaces.cube()];
         setInterval(() => {
             this.scene.forEach(surface => surface.doAnimation(this.math3D));
             this.renderScene();
@@ -192,6 +192,13 @@ class Graph3D extends Component {
         document.getElementById("drawPolygons").addEventListener(
             'click',
             event => this.drawPolygons = event.target.checked
+        );
+        document.getElementById("selectedSurface").addEventListener(
+            'change',
+            event => {
+                this.scene = [this.surfaces[event.target.value]()];
+            },
+            false
         );
     }
 }

@@ -1,4 +1,4 @@
-Surfaces.prototype.torus = (radius = 1, offset = 2) => {
+Surfaces.prototype.torus = (radius = 2, offset = 5, color = '#ffff00') => {
     const vertices = [];
     const edges = [];
     const polygons = [];
@@ -39,7 +39,7 @@ Surfaces.prototype.torus = (radius = 1, offset = 2) => {
                 (j + 1) % horizontalEdgeCount + i * horizontalEdgeCount,
                 (j + 1) % horizontalEdgeCount + (i + 1) % verticalEdgeCount * horizontalEdgeCount,
                 j + (i + 1) % verticalEdgeCount * horizontalEdgeCount
-            ]));
+            ], color));
         }
     }
 

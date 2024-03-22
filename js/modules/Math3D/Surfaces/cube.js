@@ -1,4 +1,4 @@
-Surfaces.prototype.cube = (edge = 1) => {
+Surfaces.prototype.cube = (edge = 5) => {
     return new Surface([
         new Point(edge, edge, edge),
         new Point(edge, -edge, edge),

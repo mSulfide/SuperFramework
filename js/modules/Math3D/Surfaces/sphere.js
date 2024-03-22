@@ -1,4 +1,4 @@
-Surfaces.prototype.sphere = (radius = 1, color = '#ffff00') => {
+Surfaces.prototype.sphere = (radius = 5, color = '#ffff00') => {
     const vertices = [];
     const edges = [];
     const polygons = [];
