@@ -1,4 +1,4 @@
-Surfaces.prototype.sphere = (radius = 1) => {
+Surfaces.prototype.sphere = (radius = 1, color = '#ffff00') => {
     const vertices = [];
     const edges = [];
     const polygons = [];
@@ -37,20 +37,20 @@ Surfaces.prototype.sphere = (radius = 1) => {
             0, 
             i * (horizontalEdgeCount - 1) + 1, 
             (i + 1) % verticalEdgeCount * (horizontalEdgeCount - 1) + 1
-        ]));
+        ], color));
         for (let j = 1; j < horizontalEdgeCount - 1; j++) {
             polygons.push(new Polygon([
                 j + i * (horizontalEdgeCount - 1), 
                 j + i * (horizontalEdgeCount - 1) + 1, 
                 (i + 1) % verticalEdgeCount * (horizontalEdgeCount - 1) + j + 1, 
                 (i + 1) % verticalEdgeCount * (horizontalEdgeCount - 1) + j
-            ]));
+            ], color));
         }
         polygons.push(new Polygon([
             (horizontalEdgeCount - 1) * ((i + 1) % verticalEdgeCount + 1),
             (horizontalEdgeCount - 1) * (i + 1),
             (horizontalEdgeCount - 1) * verticalEdgeCount + 1
-        ]));
+        ], color));
     }
 
     return new Surface(vertices, edges, polygons);

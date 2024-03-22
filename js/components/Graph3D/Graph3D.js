@@ -22,14 +22,14 @@ class Graph3D extends Component {
             callbacks: {
                 wheel: event => this.wheel(event),
                 mousemove: event => this.mousemove(event),
-                mouseup: () => this.mouseup(event),
-                mousedown: () => this.mousedown(event)
+                mouseup: event => this.mouseup(event),
+                mousedown: event => this.mousedown(event)
             }
         });
         this.math3D = new Math3D({ WIN });
         this.ligth = new Light(-40, 15, 0, 1500);
         this.surfaces = new Surfaces;
-        this.scene = this.SolarSystem();
+        this.scene = this.SolarSystem() /*[this.surfaces.torus(2, 5), this.surfaces.sphere(4)]*/;
         setInterval(() => {
             this.scene.forEach(surface => surface.doAnimation(this.math3D));
             this.renderScene();
@@ -77,13 +77,16 @@ class Graph3D extends Component {
     mousemove(event) {
         if (this.mouse0 || this.mouse2) {
             const gradus = Math.PI / 180 / 4;
-            const matrix = this.math3D.multMatrix(
+            const matrix = this.math3D.getTransform(
                 this.math3D.rotateOx((this.dy - event.offsetY) * gradus),
-                this.mouse2 ? 
-                this.math3D.rotateOz((this.dx - event.offsetX) * gradus) :
-                this.math3D.rotateOy((this.dx - event.offsetX) * gradus)
+                this.mouse2 ?
+                    this.math3D.rotateOz((this.dx - event.offsetX) * gradus) :
+                    this.math3D.rotateOy((this.dx - event.offsetX) * gradus)
             );
-            this.scene.forEach(surface => surface.points.forEach(point => this.math3D.transform(matrix, point)));
+            this.scene.forEach(surface => {
+                surface.points.forEach(point => this.math3D.transform(matrix, point))
+                this.math3D.transform(matrix, surface.center);
+            });
         }
         if (this.mouse1) {
             const offset = 0.05;
@@ -102,12 +105,25 @@ class Graph3D extends Component {
     }
 
     SolarSystem() {
-        const Earth = this.surfaces.sphere(3);
+        const Earth = this.surfaces.torus(1.6, 4);
+        const earthMatrix = this.math3D.rotateOx(Math.PI / 2);
+        Earth.points.forEach(point => this.math3D.transform(earthMatrix, point));
+        this.math3D.transform(earthMatrix, Earth.center);
         Earth.addAnimation('rotateOy', 0.1);
-        const Moon = this.surfaces.cube(1);
+        Earth.addAnimation('rotateOz', 0.05);
+        const Moon = this.surfaces.cube(1.2);
+        const matrix = this.math3D.move(8, 0, 0);
+        Moon.points.forEach(point => this.math3D.transform(matrix, point));
+        this.math3D.transform(matrix, Moon.center);
         Moon.addAnimation('rotateOx', 0.2);
         Moon.addAnimation('rotateOz', 0.05);
+        Moon.addAnimation('rotateOy', 0.1, new Point(Earth.center.x, Earth.center.y, Earth.center.z));
         return [Earth, Moon];
+    }
+
+    TwoBublick() {
+        const bublick0 = this.surfaces.torus(1.5, 4);
+        const T0 = this.math3D.move();
     }
 
     renderScene() {
@@ -123,21 +139,31 @@ class Graph3D extends Component {
                 this.graph.line(this.math3D.xs(point1), this.math3D.ys(point1), this.math3D.xs(point2), this.math3D.ys(point2));
             });
 
+
+        });
+        const polygons = [];
+        this.scene.forEach((surface, index) => {
             this.math3D.calcDistance(surface, this.WIN.camera, `distance`);
             this.math3D.calcDistance(surface, this.ligth, 'lumen');
-            this.math3D.sortByArtistAlgorithm(surface);
             surface.polygons.forEach(polygon => {
-                const points = polygon.points.map(
-                    index => new Point(this.math3D.xs(surface.points[index]), this.math3D.ys(surface.points[index]))
-                );
-                const lumen = this.math3D.calcIllumination(polygon.lumen, this.ligth.lumen);
-                let { r, g, b } = polygon.color;
-                r = Math.round(r * lumen);
-                g = Math.round(g * lumen);
-                b = Math.round(b * lumen);
-                this.graph.polygon(points, polygon.rgbToHex(r, g, b));
+                polygon.index = index;
+                polygons.push(polygon);
             });
         });
-
+        this.math3D.sortByArtistAlgorithm(polygons);
+        polygons.forEach(polygon => {
+            const points = polygon.points.map(
+                index => new Point(
+                    this.math3D.xs(this.scene[polygon.index].points[index]),
+                    this.math3D.ys(this.scene[polygon.index].points[index])
+                )
+            );
+            const lumen = this.math3D.calcIllumination(polygon.lumen, this.ligth.lumen);
+            let { r, g, b } = polygon.color;
+            r = Math.round(r * lumen);
+            g = Math.round(g * lumen);
+            b = Math.round(b * lumen);
+            this.graph.polygon(points, polygon.rgbToHex(r, g, b));
+        });
     }
 }
