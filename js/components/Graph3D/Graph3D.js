@@ -29,7 +29,7 @@ class Graph3D extends Component {
         this.math3D = new Math3D({ WIN });
         this.ligth = new Light(-40, 15, 0, 1500);
         this.surfaces = new Surfaces;
-        this.scene = [this.surfaces.torus(2, 5)];
+        this.scene = this.SolarSystem();
         setInterval(() => {
             this.scene.forEach(surface => surface.doAnimation(this.math3D));
             this.renderScene();
@@ -68,7 +68,10 @@ class Graph3D extends Component {
         event.preventDefault();
         const delta = (event.wheelDelta > 0) ? 1.2 : 0.8;
         const matrix = this.math3D.zoom(delta);
-        this.scene.forEach(surface => surface.points.forEach(point => this.math3D.transform(matrix, point)));
+        this.scene.forEach(surface => {
+            surface.points.forEach(point => this.math3D.transform(matrix, point));
+            this.math3D.transform(matrix, surface.center);
+        });
     }
 
     mousemove(event) {
@@ -89,7 +92,10 @@ class Graph3D extends Component {
                 (this.dy - event.offsetY) * offset,
                 0
             );
-            this.scene.forEach(surface => surface.points.forEach(point => this.math3D.transform(matrix, point)));
+            this.scene.forEach(surface => {
+                surface.points.forEach(point => this.math3D.transform(matrix, point));
+                this.math3D.transform(matrix, surface.center);
+            });
         }
         this.dx = event.offsetX;
         this.dy = event.offsetY;
