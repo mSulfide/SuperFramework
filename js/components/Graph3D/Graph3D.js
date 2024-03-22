@@ -10,10 +10,15 @@ class Graph3D extends Component {
             camera: new Point(0, 0, -50),
         }
         this.WIN = WIN;
+
         this.canMove = false;
         this.mouse0 = false;
         this.mouse1 = false;
         this.mouse2 = false;
+        this.drawPoints = false;
+        this.drawEdges = false;
+        this.drawPolygons = true;
+
         this.graph = new Graph({
             id: 'graph3DCanvas',
             width: 600,
@@ -128,42 +133,65 @@ class Graph3D extends Component {
 
     renderScene() {
         this.graph.clear();
-        this.scene.forEach(surface => {
-            surface.points.forEach(point => {
-                this.graph.point(this.math3D.xs(point), this.math3D.ys(point));
-            });
 
-            surface.edges.forEach(edge => {
-                const point1 = surface.points[edge.p1];
-                const point2 = surface.points[edge.p2];
-                this.graph.line(this.math3D.xs(point1), this.math3D.ys(point1), this.math3D.xs(point2), this.math3D.ys(point2));
+        if (this.drawPoints) {
+            this.scene.forEach(surface => {
+                surface.points.forEach(point => {
+                    this.graph.point(this.math3D.xs(point), this.math3D.ys(point));
+                });
             });
+        }
 
-
-        });
-        const polygons = [];
-        this.scene.forEach((surface, index) => {
-            this.math3D.calcDistance(surface, this.WIN.camera, `distance`);
-            this.math3D.calcDistance(surface, this.ligth, 'lumen');
-            surface.polygons.forEach(polygon => {
-                polygon.index = index;
-                polygons.push(polygon);
+        if (this.drawEdges) {
+            this.scene.forEach(surface => {
+                surface.edges.forEach(edge => {
+                    const point1 = surface.points[edge.p1];
+                    const point2 = surface.points[edge.p2];
+                    this.graph.line(this.math3D.xs(point1), this.math3D.ys(point1), this.math3D.xs(point2), this.math3D.ys(point2));
+                });
             });
-        });
-        this.math3D.sortByArtistAlgorithm(polygons);
-        polygons.forEach(polygon => {
-            const points = polygon.points.map(
-                index => new Point(
-                    this.math3D.xs(this.scene[polygon.index].points[index]),
-                    this.math3D.ys(this.scene[polygon.index].points[index])
-                )
-            );
-            const lumen = this.math3D.calcIllumination(polygon.lumen, this.ligth.lumen);
-            let { r, g, b } = polygon.color;
-            r = Math.round(r * lumen);
-            g = Math.round(g * lumen);
-            b = Math.round(b * lumen);
-            this.graph.polygon(points, polygon.rgbToHex(r, g, b));
-        });
+        }
+
+        if (this.drawPolygons) {
+            const polygons = [];
+            this.scene.forEach((surface, index) => {
+                this.math3D.calcDistance(surface, this.WIN.camera, `distance`);
+                this.math3D.calcDistance(surface, this.ligth, 'lumen');
+                surface.polygons.forEach(polygon => {
+                    polygon.index = index;
+                    polygons.push(polygon);
+                });
+            });
+            this.math3D.sortByArtistAlgorithm(polygons);
+            polygons.forEach(polygon => {
+                const points = polygon.points.map(
+                    index => new Point(
+                        this.math3D.xs(this.scene[polygon.index].points[index]),
+                        this.math3D.ys(this.scene[polygon.index].points[index])
+                    )
+                );
+                const lumen = this.math3D.calcIllumination(polygon.lumen, this.ligth.lumen);
+                let { r, g, b } = polygon.color;
+                r = Math.round(r * lumen);
+                g = Math.round(g * lumen);
+                b = Math.round(b * lumen);
+                this.graph.polygon(points, polygon.rgbToHex(r, g, b));
+            });
+        }
+    }
+
+    addEventListeners() {
+        document.getElementById("drawPoints").addEventListener(
+            'click',
+            event => this.drawPoints = event.target.checked
+        );
+        document.getElementById("drawEdges").addEventListener(
+            'click',
+            event => this.drawEdges = event.target.checked
+        );
+        document.getElementById("drawPolygons").addEventListener(
+            'click',
+            event => this.drawPolygons = event.target.checked
+        );
     }
 }
