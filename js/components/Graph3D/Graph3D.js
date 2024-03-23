@@ -34,7 +34,7 @@ class Graph3D extends Component {
         this.math3D = new Math3D({ WIN });
         this.ligth = new Light(-40, 15, 0, 1500);
         this.surfaces = new Surfaces;
-        this.scene = [this.surfaces.cube()];
+        this.scene = this.SolarSystem();
         setInterval(() => {
             this.scene.forEach(surface => surface.doAnimation(this.math3D));
             this.renderScene();
@@ -109,7 +109,7 @@ class Graph3D extends Component {
         this.dy = event.offsetY;
     }
 
-    SolarSystem() {
+    /*SolarSystem() {
         const Earth = this.surfaces.torus(1.6, 4);
         const earthMatrix = this.math3D.rotateOx(Math.PI / 2);
         Earth.points.forEach(point => this.math3D.transform(earthMatrix, point));
@@ -124,11 +124,25 @@ class Graph3D extends Component {
         Moon.addAnimation('rotateOz', 0.05);
         Moon.addAnimation('rotateOy', 0.1, new Point(Earth.center.x, Earth.center.y, Earth.center.z));
         return [Earth, Moon];
-    }
+    }*/
 
-    TwoBublick() {
-        const bublick0 = this.surfaces.torus(1.5, 4);
-        const T0 = this.math3D.move();
+    SolarSystem() {
+        const Sun = this.surfaces.sphere(3.5, '#FFCC00');
+        Sun.addAnimation('rotateOz', -0.01);
+
+        const Earth = this.surfaces.sphere(2, '#22FF33');
+        const earthMatrix = this.math3D.move(12, 0, 0);
+        Earth.points.forEach(point => this.math3D.transform(earthMatrix, point));
+        this.math3D.transform(earthMatrix, Earth.center);
+        Earth.addAnimation('rotateOz', 0.06, new Point);
+
+        const Moon = this.surfaces.sphere(1, '#454545');
+        const moonMatrix = this.math3D.move(8, 0, 0);
+        Moon.points.forEach(point => this.math3D.transform(moonMatrix, point));
+        this.math3D.transform(moonMatrix, Moon.center);
+        Moon.addAnimation('rotateOz', 0.6, Earth.center);
+
+        return [Sun, Earth, Moon];
     }
 
     renderScene() {
