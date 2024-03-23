@@ -109,24 +109,21 @@ class Graph3D extends Component {
         this.dy = event.offsetY;
     }
 
-    /*SolarSystem() {
+    SolarSystem() {
         const Earth = this.surfaces.torus(1.6, 4);
         const earthMatrix = this.math3D.rotateOx(Math.PI / 2);
         Earth.points.forEach(point => this.math3D.transform(earthMatrix, point));
         this.math3D.transform(earthMatrix, Earth.center);
         Earth.addAnimation('rotateOy', 0.1);
         Earth.addAnimation('rotateOz', 0.05);
-        const Moon = this.surfaces.cube(1.2);
-        const matrix = this.math3D.move(8, 0, 0);
-        Moon.points.forEach(point => this.math3D.transform(matrix, point));
-        this.math3D.transform(matrix, Moon.center);
+        const Moon = this.surfaces.cube(1.2, new Point(10, 0, 0));
         Moon.addAnimation('rotateOx', 0.2);
         Moon.addAnimation('rotateOz', 0.05);
         Moon.addAnimation('rotateOy', 0.1, new Point(Earth.center.x, Earth.center.y, Earth.center.z));
         return [Earth, Moon];
-    }*/
+    }
 
-    SolarSystem() {
+    /*SolarSystem() {
         const Sun = this.surfaces.sphere(3.5, '#FFCC00');
         Sun.addAnimation('rotateOz', -0.01);
 
@@ -143,7 +140,7 @@ class Graph3D extends Component {
         Moon.addAnimation('rotateOz', 0.6, Earth.center);
 
         return [Sun, Earth, Moon];
-    }
+    }*/
 
     renderScene() {
         this.graph.clear();

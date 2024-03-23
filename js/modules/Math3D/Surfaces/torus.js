@@ -1,4 +1,4 @@
-Surfaces.prototype.torus = (radius = 2, offset = 5, color = '#ffff00') => {
+Surfaces.prototype.torus = (radius = 2, offset = 5, color = '#ffff00', center = new Point) => {
     const vertices = [];
     const edges = [];
     const polygons = [];
@@ -10,9 +10,9 @@ Surfaces.prototype.torus = (radius = 2, offset = 5, color = '#ffff00') => {
         for (let j = 0; j < horizontalEdgeCount; j++) {
             const beta = 2 * Math.PI * j / horizontalEdgeCount;
             vertices.push(new Point(
-                radius * Math.sin(beta) * Math.cos(alpha) + offset * Math.cos(alpha),
-                radius * Math.cos(beta),
-                radius * Math.sin(alpha) * Math.sin(beta) + offset * Math.sin(alpha)
+                radius * Math.sin(beta) * Math.cos(alpha) + offset * Math.cos(alpha) + center.x,
+                radius * Math.cos(beta) + center.y,
+                radius * Math.sin(alpha) * Math.sin(beta) + offset * Math.sin(alpha) + center.z
             ));
         }
     }
@@ -43,5 +43,5 @@ Surfaces.prototype.torus = (radius = 2, offset = 5, color = '#ffff00') => {
         }
     }
 
-    return new Surface(vertices, edges, polygons);
+    return new Surface(vertices, edges, polygons, center);
 }

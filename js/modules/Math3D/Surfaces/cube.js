@@ -1,13 +1,13 @@
-Surfaces.prototype.cube = (edge = 5) => {
+Surfaces.prototype.cube = (edge = 5, center = new Point) => {
     return new Surface([
-        new Point(edge, edge, edge),
-        new Point(edge, -edge, edge),
-        new Point(-edge, -edge, edge),
-        new Point(-edge, edge, edge),
-        new Point(edge, edge, -edge),
-        new Point(edge, -edge, -edge),
-        new Point(-edge, -edge, -edge),
-        new Point(-edge, edge, -edge),
+        new Point(edge + center.x, edge + center.y, edge + center.z),
+        new Point(edge + center.x, -edge + center.y, edge + center.z),
+        new Point(-edge + center.x, -edge + center.y, edge + center.z),
+        new Point(-edge + center.x, edge + center.y, edge + center.z),
+        new Point(edge + center.x, edge + center.y, -edge + center.z),
+        new Point(edge + center.x, -edge + center.y, -edge + center.z),
+        new Point(-edge + center.x, -edge + center.y, -edge + center.z),
+        new Point(-edge + center.x, edge + center.y, -edge + center.z)
     ], [
         new Edge(0, 1),
         new Edge(1, 2),
@@ -28,5 +28,7 @@ Surfaces.prototype.cube = (edge = 5) => {
         new Polygon([6, 5, 4, 7], '#55ffff'),
         new Polygon([6, 7, 3, 2], '#ffff55'),
         new Polygon([6, 2, 1, 5], '#ff55ff')
-    ]);
+    ],
+        center
+    );
 }
